@@ -3,6 +3,7 @@ package com.example.mental.lazytracker;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,7 +52,6 @@ public class MainActivity extends Activity implements OnClickListener {
     //Location Manager and Listener
     private LocationManager locationManager = null;
     private LocationListener locationListener = null;
-    private LocationManager locationMangaer = null;
 
     //Current Location variables
     private Location launchLoc = null;
@@ -60,15 +60,15 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private Button btnGetLocation = null;
     private Boolean flag = false;
-    private static final String TAG = "Debug";
     private Boolean networkAvaliableFlag = false;
-    private TextView editLocation = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         myDb = new DatabaseHelper(this);
         insertLocation(myDb, "Super Market 1", 41.090289, 23.549635);
@@ -81,7 +81,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
         //Initializations
         currLocTextView = (TextView) findViewById(R.id.currLocTextView);
-        editLocation = (TextView) findViewById(R.id.currLocTextView);
         closestMarketTextView = (TextView) findViewById(R.id.closestMarketTextView);
         btnGetLocation = (Button) findViewById(R.id.updateLocButton);
         btnGetLocation.setOnClickListener(this);
@@ -89,55 +88,8 @@ public class MainActivity extends Activity implements OnClickListener {
         showMapButton = (Button) findViewById(R.id.showMapButton);
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 
-        //Ελεγχος για το WIFI
-        if (wifi.isWifiEnabled()){
-            Toast.makeText(this, "WiFi is Enabled in your device", Toast.LENGTH_SHORT).show();
-        } else{
-            {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Your WiFi seems to be disabled, do you want to enable it?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                startActivity(new Intent(android.provider.Settings.	ACTION_WIFI_SETTINGS));
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                dialog.cancel();
-                            }
-                        });
-                final AlertDialog alert = builder.create();
-                alert.show();
-            }
-        }
-
-
-
-        //Ελεγχος για το GPS
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Toast.makeText(this, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
-        }else{
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            dialog.cancel();
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.show();
-        }
-
-
+        if(checkNetwork(networkAvaliableFlag)) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -148,15 +100,32 @@ public class MainActivity extends Activity implements OnClickListener {
                 currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(launchLong) + " και latitude = " + coordinatesDf.format(launchLat) + "\n" +
                         "dieuthinsi " + getName(launchLoc, "address") + " poli " + getName(launchLoc, "city") + " xwra " + getName(launchLoc, "country"));
             }
-
         }
-    public void onUpdateLocation(View v) {
-        locationListener = new MyLocationListener();
+    }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+    //checks if the network is active
+    public boolean checkNetwork(boolean networkAvaliableFlag) {
+        networkAvaliableFlag = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if(networkAvaliableFlag) {
+            return true;
+        }else {
+            return false;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+    }
+
+    /*----Method to Check GPS is enable or disable ----- */
+    private Boolean displayGpsStatus() {
+        ContentResolver contentResolver = getBaseContext()
+                .getContentResolver();
+        boolean gpsStatus = Settings.Secure
+                .isLocationProviderEnabled(contentResolver,
+                        LocationManager.GPS_PROVIDER);
+        if (gpsStatus) {
+            return true;
+
+        } else {
+            return false;
+        }
     }
 
     public void insertLocation(DatabaseHelper db, String name, double longt, double lat) {
@@ -179,7 +148,16 @@ public class MainActivity extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View v) {
+        flag = displayGpsStatus();
+        if(flag) {
+            locationListener = new MyLocationListener();
 
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        }
+        updateLocButton.setEnabled(false);
     }
 
     public String getName(Location loc, String dataType) {
@@ -217,10 +195,8 @@ public class MainActivity extends Activity implements OnClickListener {
             Toast.makeText(getBaseContext(),"Η τοποθεσία άλλαξε : Lat: " +
                             coordinatesDf.format(location.getLatitude())+ " Lng: " + coordinatesDf.format(location.getLongitude()),
                     Toast.LENGTH_SHORT).show();
-            String longitude = "Longitude: " +coordinatesDf.format(location.getLongitude());
-            //Log.v(TAG, longitude);
-            String latitude = "Latitude: " +coordinatesDf.format(location.getLatitude());
-            //Log.v(TAG, latitude);
+            currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(location.getLongitude()) + " και latitude = " + coordinatesDf.format(location.getLatitude()) + "\n" +
+                    "dieuthinsi " + getName(location, "address") + " poli " + getName(location, "city") + " xwra " + getName(location, "country"));
         }
 
         @Override

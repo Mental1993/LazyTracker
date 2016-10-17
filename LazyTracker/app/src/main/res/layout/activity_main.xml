@@ -35,7 +35,7 @@
             android:id="@+id/updateLocButton"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:layout_weight="0.02" />
+            android:layout_weight="0.02"/>
 
         <TextView
             android:text="ΚΟΝΤΙΝΟΤΕΡΟ ΣΟΥΠΕΡ ΜΑΡΚΕΤ"
