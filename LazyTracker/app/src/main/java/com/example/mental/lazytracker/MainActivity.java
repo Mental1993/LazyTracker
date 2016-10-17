@@ -23,6 +23,8 @@ import java.text.DecimalFormat;
 
 public class MainActivity extends Activity {
 
+    DatabaseHelper myDb;
+
     //Number formats
     private static DecimalFormat coordinatesDf = new DecimalFormat(".####");
     private static DecimalFormat distanceDf = new DecimalFormat("###,###.##");
@@ -47,6 +49,11 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myDb = new DatabaseHelper(this);
+        insertLocation(myDb, "Super Market 1", 41.090289, 23.549635);
+        insertLocation(myDb, "Super Market 2", 41.090798, 23.547200);
+        insertLocation(myDb, "Super Market 3", 41.092136, 23.552884);
 
         //Lock screen for always Portrait mode
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -83,7 +90,15 @@ public class MainActivity extends Activity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }
 
+    public void insertLocation(DatabaseHelper db, String name, double longt, double lat) {
+        boolean isInserted = db.insertData(name, longt, lat);
+        if(isInserted) {
+            Toast.makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+        }
 
+    }
 
 
 
@@ -105,6 +120,7 @@ public class MainActivity extends Activity {
             //Log.v(TAG, longitude);
             String latitude = "Latitude: " +coordinatesDf.format(location.getLatitude());
             //Log.v(TAG, latitude);
+            currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(location.getLongitude()) + " και latitude = " + coordinatesDf.format(location.getLatitude()));
         }
 
         @Override
