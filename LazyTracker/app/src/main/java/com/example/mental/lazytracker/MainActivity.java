@@ -58,7 +58,6 @@ public class MainActivity extends Activity implements OnClickListener {
     private double launchLong = 0;
     private double launchLat = 0;
 
-    private Button btnGetLocation = null;
     private Boolean flag = false;
     private Boolean networkAvaliableFlag = false;
 
@@ -82,8 +81,8 @@ public class MainActivity extends Activity implements OnClickListener {
         //Initializations
         currLocTextView = (TextView) findViewById(R.id.currLocTextView);
         closestMarketTextView = (TextView) findViewById(R.id.closestMarketTextView);
-        btnGetLocation = (Button) findViewById(R.id.updateLocButton);
-        btnGetLocation.setOnClickListener(this);
+        updateLocButton = (Button) findViewById(R.id.updateLocButton);
+        updateLocButton.setOnClickListener(this);
         findClosestButton = (Button) findViewById(R.id.findClosestButton);
         showMapButton = (Button) findViewById(R.id.showMapButton);
 
