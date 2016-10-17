@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -108,7 +109,13 @@ public class MainActivity extends Activity implements OnClickListener {
         if(networkAvaliableFlag) {
             return true;
         }else {
-            return false;
+            WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifi.setWifiEnabled(true); // true or false to activate/deactivate wifi
+            if(wifi.isWifiEnabled()) {
+                return true;
+            }else {
+                return false;
+            }
         }
     }
 
@@ -123,7 +130,23 @@ public class MainActivity extends Activity implements OnClickListener {
             return true;
 
         } else {
-            return false;
+            Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(i);
+            return true;
+        }
+    }
+
+    public void onFindClosest(View v) {
+        Cursor res = myDb.getData();
+        if(res.getCount() == 0) {
+            //empy database
+            return;
+        }else {
+            StringBuffer buffer = new StringBuffer();
+            while(res.moveToNext()) {
+                buffer.append("ID " + res.getString(0) + "\nName " + res.getString(1) + "\nLong " + res.getString(2) + "\nLat " + res.getString(3) + "\n\n");
+            }
+            //closestMarketTextView.setText(buffer);
         }
     }
 
@@ -196,6 +219,7 @@ public class MainActivity extends Activity implements OnClickListener {
                     Toast.LENGTH_SHORT).show();
             currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(location.getLongitude()) + " και latitude = " + coordinatesDf.format(location.getLatitude()) + "\n" +
                     "dieuthinsi " + getName(location, "address") + " poli " + getName(location, "city") + " xwra " + getName(location, "country"));
+
         }
 
         @Override

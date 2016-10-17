@@ -51,7 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/findClosestButton"
-            android:layout_weight="0.05" />
+            android:layout_weight="0.05"
+            android:onClick="onFindClosest" />
 
         <Button
             android:text="ΕΜΦΑΝΙΣΗ ΣΤΟΝ ΧΑΡΤΗ"
