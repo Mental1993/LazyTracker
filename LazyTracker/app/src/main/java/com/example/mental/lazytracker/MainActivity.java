@@ -157,6 +157,7 @@ public class MainActivity extends Activity implements OnClickListener {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
     }
 
     public void insertLocation(DatabaseHelper db, String name, double longt, double lat) {
@@ -217,10 +218,8 @@ public class MainActivity extends Activity implements OnClickListener {
             Toast.makeText(getBaseContext(),"Η τοποθεσία άλλαξε : Lat: " +
                             coordinatesDf.format(location.getLatitude())+ " Lng: " + coordinatesDf.format(location.getLongitude()),
                     Toast.LENGTH_SHORT).show();
-            String longitude = "Longitude: " +coordinatesDf.format(location.getLongitude());
-            //Log.v(TAG, longitude);
-            String latitude = "Latitude: " +coordinatesDf.format(location.getLatitude());
-            //Log.v(TAG, latitude);
+            currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(location) + " και latitude = " + coordinatesDf.format(location) + "\n" +
+                    "dieuthinsi " + getName(location, "address") + " poli " + getName(location, "city") + " xwra " + getName(location, "country"));
         }
 
         @Override
