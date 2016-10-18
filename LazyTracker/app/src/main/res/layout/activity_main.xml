@@ -35,14 +35,14 @@
             android:id="@+id/updateLocButton"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:layout_weight="0.02"/>
+            android:layout_weight="0.07"/>
 
         <TextView
             android:text="ΚΟΝΤΙΝΟΤΕΡΟ ΣΟΥΠΕΡ ΜΑΡΚΕΤ"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/closestMarketTextView"
-            android:layout_weight="0.19"
+            android:layout_weight="0.14"
             android:textAlignment="center"
             android:textStyle="normal|italic" />
 
@@ -59,6 +59,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/showMapButton"
-            android:layout_weight="0.12" />
+            android:layout_weight="0.04" />
     </LinearLayout>
 </RelativeLayout>
