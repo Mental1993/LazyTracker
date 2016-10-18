@@ -63,13 +63,6 @@ public class MainActivity extends Activity implements OnClickListener {
     private double launchLong = 0;
     private double launchLat = 0;
 
-    //Current Location variables
-    private Location currLoc = null;
-    private double currLong = 0;
-    private double currLat = 0;
-
-
-
     private Boolean flag = false;
     private Boolean networkAvaliableFlag = false;
     private int index;
@@ -85,6 +78,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
         //locationObject = new LocationClass();
         myDb = new DatabaseHelper(this);
+
        // myDb.onCreate(myDb.getWritableDatabase());
         myDb.deleteTableData(myDb.getWritableDatabase());
         insertLocation(myDb, "Super Market 1", 23.549635, 41.090289);
@@ -110,14 +104,11 @@ public class MainActivity extends Activity implements OnClickListener {
                 return;
             }
             launchLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            currLoc = launchLoc;
             if (launchLoc != null) {
                 launchLong = launchLoc.getLongitude();
                 launchLat = launchLoc.getLatitude();
                 currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(launchLong) + " και latitude = " + coordinatesDf.format(launchLat) + "\n" +
-                        "dieuthinsi " + getName(launchLoc, "address") + " poli " + getName(launchLoc, "city") + " xwra " + getName(launchLoc, "country"));
-                currLong = launchLong;
-                currLat = launchLat;
+                        "διεύθυνση " + getName(launchLoc, "address") + " πόλη " + getName(launchLoc, "city") + " χώρα " + getName(launchLoc, "country"));
             }
         }
     }
@@ -166,17 +157,17 @@ public class MainActivity extends Activity implements OnClickListener {
             int i = 0;
             index = -1;
             while(res.moveToNext()) {
-                Location loc = new Location("");
+                Location loc = new Location(res.getString(1));
                 loc.setLongitude(Double.parseDouble(res.getString(2)));
                 loc.setLatitude(Double.parseDouble(res.getString(3)));
-                listLoc.add(new Location(loc));
-                if(currLoc.distanceTo(listLoc.get(i)) < min) {
-                    min = currLoc.distanceTo(listLoc.get(i));
+                listLoc.add(loc);
+                if(launchLoc.distanceTo(listLoc.get(i)) < min) {
+                    min = launchLoc.distanceTo(listLoc.get(i));
                     index = i;
                 }
                 i++;
             }
-            closestMarketTextView.setText("Closest distance is " + min + " με διευθυνση " + getName(listLoc.get(index), "address"));
+            closestMarketTextView.setText("Κοντινότερη απόσταση είναι " + distanceDf.format(min) + "m \n "+listLoc.get(index).getProvider()+" με διευθυνση " + getName(listLoc.get(index), "address"));
         }
     }
 
@@ -209,8 +200,9 @@ public class MainActivity extends Activity implements OnClickListener {
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, locationListener);
                 }
+                updateLocButton.setText("Η τοποθεσία θα ανανεώνεται αυτόματα");
                 updateLocButton.setEnabled(false);
                 break;
         }
@@ -240,7 +232,7 @@ public class MainActivity extends Activity implements OnClickListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "No further information found";
+        return "Δεν υπάρχουν πληροφορίες";
     }
 
 
@@ -250,15 +242,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
         @Override
         public void onLocationChanged(Location location) {
-            currLoc = location;
-            currLong = location.getLongitude();
-            currLat = location.getLatitude();
+            launchLoc = location;
             Toast.makeText(getBaseContext(),"Η τοποθεσία άλλαξε : Lat: " +
                             coordinatesDf.format(location.getLatitude())+ " Lng: " + coordinatesDf.format(location.getLongitude()),
                     Toast.LENGTH_SHORT).show();
-            currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(currLong) + " και latitude = " + coordinatesDf.format(currLat) + "\n" +
-                    "dieuthinsi " + getName(location, "address") + " poli " + getName(location, "city") + " xwra " + getName(location, "country"));
-
+            currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(location.getLongitude()) + " και latitude = " + coordinatesDf.format(location.getLatitude()) + "\n" +
+                    "διεύθυνση " + getName(location, "address") + " πόλη " + getName(location, "city") + " χώρα " + getName(location, "country"));
         }
 
         @Override
