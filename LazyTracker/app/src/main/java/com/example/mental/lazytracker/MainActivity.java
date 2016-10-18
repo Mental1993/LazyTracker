@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,16 +32,20 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends Activity implements OnClickListener {
 
+    //Class objects
     DatabaseHelper myDb;
 
     //Number formats
     private static DecimalFormat coordinatesDf = new DecimalFormat(".####");
     private static DecimalFormat distanceDf = new DecimalFormat("###,###.##");
+
+    ArrayList<Location> listLoc;
 
     //Widgets
     private TextView currLocTextView;
@@ -53,13 +58,15 @@ public class MainActivity extends Activity implements OnClickListener {
     private LocationManager locationManager = null;
     private LocationListener locationListener = null;
 
-    //Current Location variables
+    //Launch Location variables
     private Location launchLoc = null;
     private double launchLong = 0;
     private double launchLat = 0;
 
     private Boolean flag = false;
     private Boolean networkAvaliableFlag = false;
+    private int index;
+    private float min;
 
 
     @Override
@@ -69,10 +76,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        //locationObject = new LocationClass();
         myDb = new DatabaseHelper(this);
-        insertLocation(myDb, "Super Market 1", 41.090289, 23.549635);
-        insertLocation(myDb, "Super Market 2", 41.090798, 23.547200);
-        insertLocation(myDb, "Super Market 3", 41.092136, 23.552884);
+
+       // myDb.onCreate(myDb.getWritableDatabase());
+        myDb.deleteTableData(myDb.getWritableDatabase());
+        insertLocation(myDb, "Super Market 1", 23.549635, 41.090289);
+        insertLocation(myDb, "Super Market 2", 23.547200, 41.090798);
+        insertLocation(myDb, "Super Market 3", 23.552884, 41.092136);
 
 
         //Lock screen for always Portrait mode
@@ -97,7 +108,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 launchLong = launchLoc.getLongitude();
                 launchLat = launchLoc.getLatitude();
                 currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(launchLong) + " και latitude = " + coordinatesDf.format(launchLat) + "\n" +
-                        "dieuthinsi " + getName(launchLoc, "address") + " poli " + getName(launchLoc, "city") + " xwra " + getName(launchLoc, "country"));
+                        "διεύθυνση " + getName(launchLoc, "address") + " πόλη " + getName(launchLoc, "city") + " χώρα " + getName(launchLoc, "country"));
             }
         }
     }
@@ -108,7 +119,13 @@ public class MainActivity extends Activity implements OnClickListener {
         if(networkAvaliableFlag) {
             return true;
         }else {
-            return false;
+            WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifi.setWifiEnabled(true); // true or false to activate/deactivate wifi
+            if(wifi.isWifiEnabled()) {
+                return true;
+            }else {
+                return false;
+            }
         }
     }
 
@@ -123,7 +140,34 @@ public class MainActivity extends Activity implements OnClickListener {
             return true;
 
         } else {
-            return false;
+            Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(i);
+            return true;
+        }
+    }
+
+    public void onFindClosest(View v) {
+        Cursor res = myDb.getData();
+        if(res.getCount() == 0) {
+            //empy database
+            return;
+        }else {
+            listLoc = new ArrayList<>();
+            min = 1000000000;
+            int i = 0;
+            index = -1;
+            while(res.moveToNext()) {
+                Location loc = new Location(res.getString(1));
+                loc.setLongitude(Double.parseDouble(res.getString(2)));
+                loc.setLatitude(Double.parseDouble(res.getString(3)));
+                listLoc.add(loc);
+                if(launchLoc.distanceTo(listLoc.get(i)) < min) {
+                    min = launchLoc.distanceTo(listLoc.get(i));
+                    index = i;
+                }
+                i++;
+            }
+            closestMarketTextView.setText("Κοντινότερη απόσταση είναι " + distanceDf.format(min) + "m \n "+listLoc.get(index).getProvider()+" με διευθυνση " + getName(listLoc.get(index), "address"));
         }
     }
 
@@ -147,16 +191,21 @@ public class MainActivity extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        flag = displayGpsStatus();
-        if(flag) {
-            locationListener = new MyLocationListener();
+        switch(v.getId()) {
+            case R.id.updateLocButton:
+            flag = displayGpsStatus();
+                if (flag) {
+                    locationListener = new MyLocationListener();
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, locationListener);
+                }
+                updateLocButton.setText("Η τοποθεσία θα ανανεώνεται αυτόματα");
+                updateLocButton.setEnabled(false);
+                break;
         }
-        updateLocButton.setEnabled(false);
     }
 
     public String getName(Location loc, String dataType) {
@@ -183,19 +232,22 @@ public class MainActivity extends Activity implements OnClickListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return "Δεν υπάρχουν πληροφορίες";
     }
+
+
 
 
     private class MyLocationListener implements LocationListener {
 
         @Override
         public void onLocationChanged(Location location) {
+            launchLoc = location;
             Toast.makeText(getBaseContext(),"Η τοποθεσία άλλαξε : Lat: " +
                             coordinatesDf.format(location.getLatitude())+ " Lng: " + coordinatesDf.format(location.getLongitude()),
                     Toast.LENGTH_SHORT).show();
             currLocTextView.setText("Τελευταία γνωστή τοποθεσία: Longtitude = " + coordinatesDf.format(location.getLongitude()) + " και latitude = " + coordinatesDf.format(location.getLatitude()) + "\n" +
-                    "dieuthinsi " + getName(location, "address") + " poli " + getName(location, "city") + " xwra " + getName(location, "country"));
+                    "διεύθυνση " + getName(location, "address") + " πόλη " + getName(location, "city") + " χώρα " + getName(location, "country"));
         }
 
         @Override

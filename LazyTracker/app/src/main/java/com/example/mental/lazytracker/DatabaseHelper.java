@@ -2,6 +2,7 @@ package com.example.mental.lazytracker;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -9,6 +10,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -21,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 3);
     }
 
     @Override
@@ -47,5 +49,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else {
             return true;
         }
+    }
+
+    public void deleteTableData(SQLiteDatabase db) {
+        SQLiteStatement s = db.compileStatement("select count(*) from " + TABLE_NAME);
+        long count = s.simpleQueryForLong();
+        if(count > 0) {
+            db.execSQL("DELETE FROM " + TABLE_NAME);
+        }
+
+
+    }
+
+    public Cursor getData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
+        return res;
+
+
     }
 }
