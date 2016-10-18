@@ -69,6 +69,9 @@ public class MainActivity extends Activity implements OnClickListener {
     private float min;
 
 
+    ConnectionDetector cd;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +99,27 @@ public class MainActivity extends Activity implements OnClickListener {
         updateLocButton.setOnClickListener(this);
         findClosestButton = (Button) findViewById(R.id.findClosestButton);
         showMapButton = (Button) findViewById(R.id.showMapButton);
+
+        //Internet connection detector
+        cd = new ConnectionDetector(this);
+        if (cd.isConnected())
+        { }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setCancelable(false);
+            builder.setTitle("Warning");
+            builder.setMessage("Internet Connection Required");
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
