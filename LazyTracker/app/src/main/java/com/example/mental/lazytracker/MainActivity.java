@@ -38,6 +38,8 @@ import java.util.Locale;
 
 public class MainActivity extends Activity implements OnClickListener {
 
+
+
     //Class objects
     DatabaseHelper myDb;
 
