@@ -106,11 +106,11 @@ public class MainActivity extends Activity implements OnClickListener {
         { }
         else {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setCancelable(false);
             builder.setTitle("Warning");
+            builder.setCancelable(false);
             builder.setMessage("Internet Connection Required");
+            builder.setNegativeButton("OK", new DialogInterface.OnClickListener()
             {
-                @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
                     dialog.dismiss();
