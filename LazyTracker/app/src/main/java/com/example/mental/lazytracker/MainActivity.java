@@ -87,9 +87,18 @@ public class MainActivity extends Activity implements OnClickListener {
 
        // myDb.onCreate(myDb.getWritableDatabase());
         myDb.deleteTableData(myDb.getWritableDatabase());
-        insertLocation(myDb, "Super Market 1", 23.549635, 41.090289);
-        insertLocation(myDb, "Super Market 2", 23.547200, 41.090798);
-        insertLocation(myDb, "Super Market 3", 23.552884, 41.092136);
+        insertLocation(myDb, "Σουπερ Μαρκετ ΜΑΣΟΥΤΗΣ", 23.550997, 41.082586);
+        insertLocation(myDb, "Express Market", 23.543846, 41.080730);
+        insertLocation(myDb, "ΑΒ Βασιλοπουλος", 23.539560, 41.079535);
+        insertLocation(myDb, "LIDL", 23.541276, 41.073916);
+        insertLocation(myDb, "Listamarket.gr", 23.547875, 41.081870);
+        insertLocation(myDb, "Σουπερ Μαρκετ ΚΑΝΤΖΑΣ", 23.554258, 41.091485);
+        insertLocation(myDb, "DISCOUNT Market", 23.540027, 41.087345);
+        insertLocation(myDb, "Carrefour Μαρινοπουλος", 23.547199, 41.090786);
+        insertLocation(myDb, "Smile Markets", 23.552825, 41.083949);
+        insertLocation(myDb, "DIA Market", 23.549402, 41.085429);
+        insertLocation(myDb, "ΠΡΟΟΔΟΣ Μαρκετ", 23.541903, 41.081967);
+        insertLocation(myDb, "METRO CASH & CARRY", 23.539825, 41.063589);
 
 
         //Lock screen for always Portrait mode
