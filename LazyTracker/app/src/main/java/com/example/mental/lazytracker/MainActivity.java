@@ -15,6 +15,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.view.View.OnClickListener;
 import android.provider.Settings;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends Activity implements OnClickListener {
+
+
 
     //Class objects
     DatabaseHelper myDb;
@@ -198,9 +201,9 @@ public class MainActivity extends Activity implements OnClickListener {
     public void insertLocation(DatabaseHelper db, String name, double longt, double lat) {
         boolean isInserted = db.insertData(name, longt, lat);
         if(isInserted) {
-            Toast.makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
         }else {
-            Toast.makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -259,8 +262,16 @@ public class MainActivity extends Activity implements OnClickListener {
         return "Δεν υπάρχουν πληροφορίες";
     }
 
-
-
+    public void onShowMapPressed(View v) {
+        try {
+            //----------MISSING------------
+            //CHECK FOR NETWORK AND GPS AVALIABILITY
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/" + launchLoc.getLatitude() + "," + launchLoc.getLongitude() + "/" + listLoc.get(index).getLatitude() + "," + listLoc.get(index).getLongitude()));
+            startActivity(intent);
+        }catch (NullPointerException e) {
+            Toast.makeText(MainActivity.this, "Δεν έχει βρεθεί η κοντινότερη απόσταση ακόμα.", Toast.LENGTH_LONG).show();
+        }
+    }
 
     private class MyLocationListener implements LocationListener {
 
