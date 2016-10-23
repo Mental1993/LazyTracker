@@ -20,7 +20,7 @@ import android.net.wifi.WifiManager;
 import android.view.View.OnClickListener;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends  Activity implements OnClickListener {
 
 
 
@@ -73,6 +73,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
 
     ConnectionDetector cd;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.my_menu, menu);
+        return true;
+    }
 
 
     @Override
@@ -215,14 +223,6 @@ public class MainActivity extends Activity implements OnClickListener {
             //Toast.makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
         }
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.my_menu,menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -10,14 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.mental.lazytracker.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="1"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:background="@android:color/transparent">
 
         <TextView
             android:text="Η ΤΟΠΟΘΕΣΙΑ ΜΟΥ"
@@ -26,16 +26,8 @@
             android:id="@+id/currLocTextView"
             android:textAlignment="center"
             android:textStyle="normal|italic"
-            android:layout_weight="0.16" />
-
-        <Button
-            android:text="ΑΝΑΝΕΩΣΗ ΤΟΠΟΘΕΣΙΑΣ"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/updateLocButton"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:layout_weight="0.07"/>
+            android:layout_weight="0.16"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:text="ΚΟΝΤΙΝΟΤΕΡΟ ΣΟΥΠΕΡ ΜΑΡΚΕΤ"
@@ -44,7 +36,12 @@
             android:id="@+id/closestMarketTextView"
             android:layout_weight="0.14"
             android:textAlignment="center"
-            android:textStyle="normal|italic" />
+            android:textStyle="normal|italic"
+            android:layout_below="@+id/updateLocButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="55dp"
+            android:textColor="@android:color/black" />
 
         <Button
             android:text="ΕΥΡΕΣΗ ΚΟΝΤΙΝΟΤΕΡΟΥ ΣΟΥΠΕΡ ΜΑΡΚΕΤ"
@@ -52,7 +49,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/findClosestButton"
             android:layout_weight="0.05"
-            android:onClick="onFindClosest" />
+            android:onClick="onFindClosest"
+            android:layout_below="@+id/closestMarketTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="46dp"
+            android:background="@android:color/holo_blue_dark"
+            android:textSize="12sp" />
 
         <Button
             android:text="ΕΜΦΑΝΙΣΗ ΣΤΟΝ ΧΑΡΤΗ"
@@ -60,6 +63,27 @@
             android:layout_height="wrap_content"
             android:id="@+id/showMapButton"
             android:layout_weight="0.04"
-            android:onClick="onShowMapPressed" />
-    </LinearLayout>
+            android:onClick="onShowMapPressed"
+            android:layout_marginBottom="43dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="@android:color/holo_orange_dark"
+            android:textSize="12sp" />
+
+        <Button
+            android:text="ΑΝΑΝΕΩΣΗ ΤΟΠΟΘΕΣΙΑΣ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/updateLocButton"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:layout_weight="0.07"
+            android:layout_marginTop="64dp"
+            android:background="@android:color/holo_green_light"
+            android:layout_below="@+id/currLocTextView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textSize="12sp" />
+    </RelativeLayout>
 </RelativeLayout>
