@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -87,6 +88,8 @@ public class MainActivity extends  Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        int bgColor = Color.parseColor("#b3ffff");
+        getWindow().getDecorView().setBackgroundColor(bgColor);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
