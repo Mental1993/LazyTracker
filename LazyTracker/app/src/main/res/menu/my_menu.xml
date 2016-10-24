@@ -5,6 +5,22 @@
 
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never"></item>
+        app:showAsAction="ifRoom|withText">
+
+    </item>
+
+    <item android:id="@+id/help"
+        android:title="@string/help"
+        app:showAsAction="ifRoom|withText"
+        android:onClick="showAlertHelp">
+
+    </item>
+
+    <item android:id="@+id/about"
+        android:title="@string/about"
+        app:showAsAction="ifRoom|withText"
+        android:onClick="showAlertAbout">
+
+    </item>
+
 </menu>
