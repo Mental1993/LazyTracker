@@ -193,37 +193,22 @@ public class MainActivity extends  Activity implements OnClickListener {
         }
     }
 
-    public void onFindClosest(View v) {
-        Cursor res = myDb.getData();
-        if(res.getCount() == 0) {
-            //empy database
+    public void insertLocation(DatabaseHelper db, String name, double longt, double lat) {
+       Cursor res = myDb.getData();
+        if (res.getCount() == 0){
+            //empty database
             return;
         }else {
             listLoc = new ArrayList<>();
             min = 1000000000;
             int i = 0;
-            index = -1;
-            while(res.moveToNext()) {
+            index= -1;
+            while(res.moveToNext()){
                 Location loc = new Location(res.getString(1));
                 loc.setLongitude(Double.parseDouble(res.getString(2)));
                 loc.setLatitude(Double.parseDouble(res.getString(3)));
                 listLoc.add(loc);
-                if(launchLoc.distanceTo(listLoc.get(i)) < min) {
-                    min = launchLoc.distanceTo(listLoc.get(i));
-                    index = i;
-                }
-                i++;
             }
-            closestMarketTextView.setText("Κοντινότερη απόσταση είναι " + distanceDf.format(min) + "m \n "+listLoc.get(index).getProvider()+" με διευθυνση " + getName(listLoc.get(index), "address"));
-        }
-    }
-
-    public void insertLocation(DatabaseHelper db, String name, double longt, double lat) {
-        boolean isInserted = db.insertData(name, longt, lat);
-        if(isInserted) {
-            //Toast.makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
-        }else {
-            //Toast.makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
         }
 
     }
