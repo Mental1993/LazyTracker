@@ -199,6 +199,19 @@ public class MainActivity extends  Activity implements OnClickListener {
         }
     }
 
+    //Exit DialogBox
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        System.exit(0);
+                    }
+    }
+
+
     //checks if the network is active
     public boolean checkNetwork(boolean networkAvaliableFlag) {
         networkAvaliableFlag = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
