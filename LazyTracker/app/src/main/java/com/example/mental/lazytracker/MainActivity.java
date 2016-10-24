@@ -18,6 +18,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -27,12 +28,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +83,42 @@ public class MainActivity extends  Activity implements OnClickListener {
 
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.my_menu, menu);
+
         return true;
+    }
+
+    //Εμφανιση Overflow menu στο ActionBar
+    private void getOverflowMenu() {
+
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if(menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.help:
+
+                return true;
+
+            case R.id.about:
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
 
@@ -90,6 +128,7 @@ public class MainActivity extends  Activity implements OnClickListener {
         setContentView(R.layout.activity_main);
         int bgColor = Color.parseColor("#b3ffff");
         getWindow().getDecorView().setBackgroundColor(bgColor);
+        this.getOverflowMenu();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -283,6 +322,44 @@ public class MainActivity extends  Activity implements OnClickListener {
         }catch (NullPointerException e) {
             Toast.makeText(MainActivity.this, "Δεν έχει βρεθεί η κοντινότερη απόσταση ακόμα.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    //Dialog for "About" button
+    public void showAlertAbout(MenuItem item) {
+        AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
+        myAlert.setMessage("Version 1.0\n" +
+        "\n" +
+        "CREATED WITH\n" +
+                "\n" +
+                "ANDROID STUDIO VERSION 2.2.2 | MINIMUM SDK 15 | Gradle - Version 2.14.1")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(R.mipmap.ic_launcher_48)
+                .setTitle("About")
+                .create();
+        myAlert.show();
+    }
+
+    //Dialog For "Help" button
+    public void showAlertHelp(MenuItem item) {
+        AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
+        myAlert.setMessage("H εφαρμογη Lazy Tracker χρησιμοποιει την τρεχουσα τοποθεσια σας για να υπολογισει την αποσταση σας απο το κοντινοτερο super market\n" +
+                "\n" +
+                "Απαιτειται συνδεση στο Internet (WiFi ή δεδομενα) και ενεργοποιημενο GPS")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(R.mipmap.ic_launcher_48)
+                .setTitle("Help")
+                .create();
+        myAlert.show();
     }
 
     private class MyLocationListener implements LocationListener {
