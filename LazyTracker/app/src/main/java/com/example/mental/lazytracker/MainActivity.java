@@ -168,19 +168,7 @@ public class MainActivity extends  Activity implements OnClickListener {
         if (cd.isConnected())
         { }
         else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Warning");
-            builder.setCancelable(false);
-            builder.setMessage("Internet Connection Required");
-            builder.setNegativeButton("OK", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+           cd.isNotConnected();
 
         }
 
@@ -227,13 +215,7 @@ public class MainActivity extends  Activity implements OnClickListener {
         if(networkAvaliableFlag) {
             return true;
         }else {
-            WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            wifi.setWifiEnabled(true); // true or false to activate/deactivate wifi
-            if(wifi.isWifiEnabled()) {
-                return true;
-            }else {
-                return false;
-            }
+            return false;
         }
     }
 

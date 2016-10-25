@@ -3,10 +3,11 @@ package com.example.mental.lazytracker;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-
+import android.provider.Settings;
 
 
 public class ConnectionDetector
@@ -35,4 +36,28 @@ public class ConnectionDetector
         }
         return false;
     }
+
+    public boolean isNotConnected()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Warning");
+        builder.setCancelable(false);
+        builder.setMessage("Internet Connection Required");
+        builder.setNegativeButton("OK", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+                Intent i = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                context.startActivity(i);
+
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return true;
+    }
+
 }
