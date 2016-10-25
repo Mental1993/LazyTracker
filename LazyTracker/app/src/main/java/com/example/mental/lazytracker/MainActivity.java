@@ -18,6 +18,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.provider.Settings;
@@ -199,6 +200,25 @@ public class MainActivity extends  Activity implements OnClickListener {
         }
     }
 
+    private Boolean exit = false;
+    @Override
+    public void onBackPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "Πατήστε το Πίσω ξανά, για Έξοδο.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
+
+    }
 
 
     //checks if the network is active
@@ -257,16 +277,22 @@ public class MainActivity extends  Activity implements OnClickListener {
     }
 
     public void onFindClosest(View v){
-        int i = 0;
-        index = -1;
-        min = 1000000000;
-        if (launchLoc.distanceTo(listLoc.get(i)) < min) {
-            min = launchLoc.distanceTo(listLoc.get(i));
-            index = i;
+        try {
+            int i = 0;
+            index = -1;
+            min = 1000000000;
+            for (i = 0; i < listLoc.size(); i++) {
+                if (launchLoc.distanceTo(listLoc.get(i)) < min) {
+                    min = launchLoc.distanceTo(listLoc.get(i));
+                    index = i;
+                }
+            }
+            closestMarketTextView.setText("Κοντινότερη απόσταση είναι " + distanceDf.format(min) + "m \n" + listLoc.get(index).getProvider() + " με διεύθυνση " + getName(listLoc.get(index), "address"));
+        } catch (Exception e) {
+            displayGpsStatus();
+            Toast.makeText(MainActivity.this, "Ενεργοποιείστε το GPS και περιμένετε.", Toast.LENGTH_LONG).show();
         }
-        i++;
-        closestMarketTextView.setText("Κοντινότερη απόσταση είναι " +distanceDf.format(min) + "m \n" + listLoc.get(index).getProvider() + " με διεύθυνση " +getName(listLoc.get(index), "address"));
-    }
+        }
     @Override
     public void onClick(View v) {
         switch(v.getId()) {

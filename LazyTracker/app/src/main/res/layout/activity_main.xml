@@ -86,6 +86,7 @@
             android:layout_below="@+id/currLocTextView"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:textColor="@android:color/black" />
     </RelativeLayout>
 </RelativeLayout>
